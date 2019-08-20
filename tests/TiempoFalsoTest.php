@@ -1,6 +1,7 @@
 <?php
 namespace TrabajoTarjeta;
 use PHPUnit\Framework\TestCase;
+// prueba
 
 class TiempoTest extends TestCase
 {
