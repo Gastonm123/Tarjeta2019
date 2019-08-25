@@ -5,14 +5,13 @@ namespace TrabajoTarjeta;
 class Tarjeta implements TarjetaInterface {
     
     protected $saldo = 0;
-    public $monto = 14.8;
-    protected $viajeplus = 0;
+    public $monto = 14.8; // el monto es responsabilidad del boleto
+    protected $viajeplus = 0; // quizas sea mejor cargar saldo negativo
     protected $ID;
     protected $ultboleto = null;
     protected $tipo = 'franquicia normal';
-    protected $tiempo;
     protected $ultimoplus = false;
-    protected $fechault;
+    protected $fechault; // ?
     protected $pago = 0;
     protected $plusdevuelto = 0;
     public $universitario = false;
@@ -25,12 +24,11 @@ class Tarjeta implements TarjetaInterface {
     protected $iguales = false;
     
     
-    public function __construct(TiempoInterface $tiempo) {
+    public function __construct() {
         $this->saldo     = 0.0;
         $this->viajeplus = 0;
         $this->ID        = rand(0, 100);
         $this->ultboleto = null;
-        $this->tiempo    = $tiempo;
     }
     
     

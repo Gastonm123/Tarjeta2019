@@ -9,13 +9,12 @@ class Colectivo implements ColectivoInterface {
     protected $numero;
     
     /**
-     * Constructor del boleto
+     * Constructor del colectivo
      */
     public function __construct($l, $e, $n) {
         $this->linea   = $l;
         $this->empresa = $e;
         $this->numero  = $n;
-        
     }
     
     public function linea() {
@@ -32,6 +31,7 @@ class Colectivo implements ColectivoInterface {
     
     public function pagarCon(TarjetaInterface $tarjeta) {
         
+        // toda esta logica deberia estar dentro de una clase boletera
         if (($tarjeta->tipotarjeta() != 'medio universitario') && ($tarjeta->tipotarjeta() != 'media franquicia estudiantil')) {
             if ($tarjeta->pagar($this) == true) {
                 

@@ -118,7 +118,7 @@ interface TarjetaInterface {
      * Retorna TRUE en caso de que el ultimo viaje haya sido transbordo
      * Retorna FALSE en caso contrario.
      * @return bool
-     *      
+     *      Retorna TRUE en caso de que el ultimo viaje haya sido transbordo. Retorna FALSE en caso contrario.
      */
     public function devolverUltimoTransbordo();
 

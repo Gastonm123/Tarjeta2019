@@ -15,6 +15,7 @@ class Boleto implements BoletoInterface {
     protected $timeult;
     
     public function __construct($valor, $colectivo, $tarjeta, $tipo, $descripcion) {
+        // esta logica se puede encargar una clase boletera
         if($tarjeta->devolverUltimoTransbordo()) {
           $this->valor = $tarjeta->devolverMontoTransbordo();
         }
@@ -26,6 +27,8 @@ class Boleto implements BoletoInterface {
         $this->id          = $tarjeta->obtenerID();
         $this->fecha       = date('d-m-Y', $tarjeta->DevolverUltimoTiempo());
         $this->descripcion = $descripcion;
+
+        // responsabilidad del boleto determinar su tipo
         if ($tarjeta->usoplus() == TRUE) {
             $this->tipo = "VIAJE PLUS";
         }
@@ -38,7 +41,6 @@ class Boleto implements BoletoInterface {
             }
         }
         
-        
     }
     
     /**
@@ -46,7 +48,6 @@ class Boleto implements BoletoInterface {
      *
      * @return int
      */
-    
     public function obtenerValor() {
         return $this->valor;
     }
@@ -63,7 +64,6 @@ class Boleto implements BoletoInterface {
     
     public function obtenerColectivo() {
         return $this->colectivo;
-        
     }
     
     public function obtenerFecha() {
