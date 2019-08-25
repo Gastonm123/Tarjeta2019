@@ -69,5 +69,21 @@ class Boleto implements BoletoInterface {
         return 30.0;
     }
     
+    // TODO revisar si es medio boleto, medio boleto universitario o franquicia
+    public static function obtenerMedioBoleto()
+    {
+        return 15.0;
+    }
+
+    public static function obtenerMedioBoletoUniversitario()
+    {
+        return 15.0;
+    }
+
+    public static function obtenerMontoFranquicia()
+    {
+        return 0.0;
+    }
+    
 }
 

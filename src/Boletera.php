@@ -38,11 +38,10 @@ class Boletera implements BoleteraInterface {
 
     private function esTransbordo($tarjeta) 
     {
-        // copiado de tarjeta.. revisar
         if ($tarjeta->obtenerUltimoPlus() == FALSE && 
             $tarjeta->ColectivosIguales() == FALSE && 
             $this->obtenerLimiteTransbordos() > $tarjeta->obtenerNroTransbordos() &&
-            time() - $tarjeta->DevolverUltimoTiempo() < $this->obtenerTiempoTransbordo()) 
+            time() - $tarjeta->DevolverUltimoTiempo() <= $this->obtenerTiempoTransbordo()) 
         {
             return TRUE;
         }
