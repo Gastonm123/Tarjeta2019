@@ -7,6 +7,7 @@ class Colectivo implements ColectivoInterface {
     protected $linea;
     protected $empresa;
     protected $numero;
+    public $boletera;
     
     /**
      * Constructor del colectivo
@@ -15,6 +16,7 @@ class Colectivo implements ColectivoInterface {
         $this->linea   = $l;
         $this->empresa = $e;
         $this->numero  = $n;
+        $this->boletera = new Boletera($this);
     }
     
     public function linea() {
@@ -35,7 +37,7 @@ class Colectivo implements ColectivoInterface {
         if (($tarjeta->tipotarjeta() != 'medio universitario') && ($tarjeta->tipotarjeta() != 'media franquicia estudiantil')) {
             if ($tarjeta->pagar($this) == true) {
                 
-                if ($tarjeta->usoplus() == true) {
+                if ($tarjeta->obtenerUltimoPlus() == true) {
                     $boleto = new Boleto('0.0', $this, $tarjeta, 'viaje plus', " ");
                     $tarjeta->guardarUltimoBoleto($boleto);
                     return $boleto;
@@ -70,7 +72,7 @@ class Colectivo implements ColectivoInterface {
         else {
             if ($tarjeta->pagoMedioBoleto($this) == TRUE) {
                 
-                if ($tarjeta->usoplus() == TRUE) {
+                if ($tarjeta->obtenerUltimoPlus() == TRUE) {
                     $boleto = new Boleto('0.0', $this, $tarjeta, 'viaje plus', " ");
                     $tarjeta->guardarUltimoBoleto($boleto);
                     return $boleto;

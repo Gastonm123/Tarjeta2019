@@ -60,7 +60,7 @@ interface TarjetaInterface {
      * @return bool
      *          $Ultimoplus
      */
-    public function usoplus();
+    public function obtenerUltimoPlus();
 
     /**
      * Guarda en la variable pago la cantidad de dinero que gastamos en el ultimo viaje.

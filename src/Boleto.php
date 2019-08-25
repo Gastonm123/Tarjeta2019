@@ -11,35 +11,24 @@ class Boleto implements BoletoInterface {
     protected $saldo;
     protected $id;
     protected $tipo;
-    protected $descripcion;
     protected $timeult;
     
-    public function __construct($valor, $colectivo, $tarjeta, $tipo, $descripcion) {
-        // esta logica se puede encargar una clase boletera
-        if($tarjeta->devolverUltimoTransbordo()) {
-          $this->valor = $tarjeta->devolverMontoTransbordo();
+    public function __construct($boletera, $tarjeta, $tipo) {
+        if($tipo == "transbordo") {
+            $this->valor = Boleto::obtenerMontoTransbordo();
+        } else if ($tipo == "normal") {
+            $this->valor = Boleto::obtenerMontoNormal();
+        } else if ($tipo == "plus") {
+            $this->valor = 0.0; 
+        } else if ($tipo == "denegado") {
+            $this->valor = 0.0;
         }
-        else {
-          $this->valor = $tarjeta->devolverUltimoPago();
-        }
-        $this->colectivo   = $colectivo->linea();
+
+        $this->colectivo   = $boletera->obtenerColectivo();
         $this->saldo       = $tarjeta->obtenerSaldo();
         $this->id          = $tarjeta->obtenerID();
-        $this->fecha       = date('d-m-Y', $tarjeta->DevolverUltimoTiempo());
-        $this->descripcion = $descripcion;
-
-        // responsabilidad del boleto determinar su tipo
-        if ($tarjeta->usoplus() == TRUE) {
-            $this->tipo = "VIAJE PLUS";
-        }
-        else {
-            if ($tarjeta->devolverUltimoTransbordo()) {
-                $this->tipo = "TRANSBORDO";
-            }
-            else {
-                $this->tipo = $tarjeta->tipotarjeta();
-            }
-        }
+        $this->fecha       = date('d-m-Y', time());
+        $this->tipo        = $tipo;
         
     }
     
