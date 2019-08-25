@@ -29,7 +29,9 @@ class Boletera implements BoleteraInterface {
         $descontado = $boleto->obtenerValor();
 
         $tarjeta->informarUso($this->colectivo);
-        $tarjeta->pagar($descontado);
+        if ($tarjeta->pagar($descontado) != TRUE) {
+            throw new Exception('No se pudo realizar el pago correctamente');
+        }
         
         $this->ingreso += $descontado;
     }

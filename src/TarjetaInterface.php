@@ -96,7 +96,7 @@ interface TarjetaInterface {
     public function CantidadPlus();
 
     /**Incrementa en 1 la cantidad de plus que debemos. Esta funcion no retorna nada */
-    public function IncrementoPlus();
+    public function descontarPlus();
 
     /**
      * Hace que la cantidad de plus que debemos pase a ser 0.
@@ -123,11 +123,13 @@ interface TarjetaInterface {
     public function devolverUltimoTransbordo();
 
     /**
-     * Devuelve el monto que vale el transbordo.
-     * @return float
-     *              el monto del transbordo
+     * Funcion necesaria para configurar en que colectivo nos encontramos actualmente que
+     * cualquier implementacion de boletera deberia usar antes de informar un pago
+     * 
+     * @param ColectivoInterface colectivo
+     *      El colectivo en el que se encuentra el usuario
      */
-    public function devolverMontoTransbordo();
+    public function informarUso(ColectivoInterface $colectivo);
 
     /**
      * Devuelve el tiempo maximo que tenemos para realizar un transbordo en base a la fecha y el horario en el 
@@ -185,6 +187,6 @@ interface TarjetaInterface {
      * FALSE en caso contario
      * @return bool
      */
-    public function pagar(Colectivo $colectivo);
+    public function pagar($valor);
 
 }

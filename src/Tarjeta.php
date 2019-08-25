@@ -4,6 +4,9 @@ namespace TrabajoTarjeta;
 
 class Tarjeta implements TarjetaInterface {
     
+    /** TODO cambiar el nombre de las variable:
+     *  - iguales: usado para el transbordo y saber cuando se tomo la misma linea
+     */ 
     protected $saldo = 0;
     public $monto = 14.8; // TODO el monto es responsabilidad del boleto
     protected $viajesplus = 0; // ANCHOR quizas sea mejor cargar saldo negativo
@@ -42,7 +45,8 @@ class Tarjeta implements TarjetaInterface {
     
     public function DevolverUltimoTiempo() {
         
-        return $this->ultimoTiempo; // ANCHOR ?
+        // devuelve cuando se pago el ultimo boleto
+        return $this->ultimoTiempo; 
     }
     
     public function MostrarPlusDevueltos() {
@@ -55,15 +59,10 @@ class Tarjeta implements TarjetaInterface {
         $this->plusdevuelto = 0; // ANCHOR ?
     }
     
-    public function ultimopago() {
-        if ($this->ultimoFueTransbordo) {
-          $this->pago = ($this->monto * 0.33); // TODO aplicar tarifas de transbordo
-        }
-       
-        else {
-          $this->pago = $this->monto + 14.8*$this->MostrarPlusDevueltos(); // ANCHOR ?
-          // TODO aplicar tarifas de viaje
-        }
+    public function ultimopago($monto) {
+        
+        // registra el ultimo pago
+        $this->pago = $monto;
         
     }
     
@@ -109,10 +108,6 @@ class Tarjeta implements TarjetaInterface {
     
     
     public function saldoSuficiente() {
-        if ($this->viajesplus > 0) {
-            $this->viajesplus -= 1;
-            return True;
-        }
         if ($this->saldo >= Boleto::obtenerMontoNormal()) {
             return TRUE;
         }
@@ -124,11 +119,6 @@ class Tarjeta implements TarjetaInterface {
     public function obtenerUltimoFueTransbordo() {
         
         return $this->ultimoFueTransbordo;
-    }
-
-    public function devolverMontoTransbordo() {
-        $this->montoTransbordo = ($this->monto*0.33); // TODO cargar monto de transbordo
-        return $this->montoTransbordo;
     }
     
     // TODO meter toda la logica de cuando es tranbordo en boletera
@@ -142,27 +132,23 @@ class Tarjeta implements TarjetaInterface {
         return $tiempoTr;
     }
     
-    public function restarSaldo() {
+    public function restarSaldo($monto) {
         if ($this->DevolverUltimoTiempo() == NULL) {
             
+            $this->saldo -= $monto;
+
+        } else {
             
-            $this->saldo -= $this->monto;
-            $this->viajesplus        = 0;
-            $this->ultimoFueTransbordo = FALSE;
-        }
-        else {
-            
+            // pagar un viaje comun y corriente
             if ($this->esTransbordo()) {
                 
-                
-                $this->montoTransbordo = ($this->monto * 0.33);
-                $this->saldo -= $this->montoTransbordo;
+                $this->saldo -= $monto;
                 $this->ultimoFueTransbordo = TRUE;
             }
             else {
                 
-                $this->saldo -= ($this->monto + $this->CantidadPlus() * 14.8);
-                $this->viajesplus        = 0;
+                $this->saldo -= $monto;
+                // el primer viaje normal luego de un transbordo debe hacer esto
                 $this->ultimoFueTransbordo = FALSE;
             }
             
@@ -181,7 +167,7 @@ class Tarjeta implements TarjetaInterface {
         return $this->ultimoColectivo;
     }
     
-    public function ColectivosIguales() { // ANCHOR ?
+    public function ColectivosIguales() { 
         return $this->iguales;
     }
     
@@ -209,44 +195,26 @@ class Tarjeta implements TarjetaInterface {
     }
     
     public function pagar($valor) {
-        // TODO cambiar este metodo para que se pueda especificar el monto a pagar
                 
-        if ($this->saldoSuficiente()) {
-            // TODO entender este trozo
-            if ($this->ultimoplus == FALSE) {
-                $this->restarSaldo();
-                $this->ultimopago();
-                $this->plusdevuelto    = 0;
-                $this->ultimoplus      = FALSE;
-                $this->ultimoTiempo    = time();
-                $this->ultimoColectivo = $colectivo;
-            }
-            else {
-                $this->plusdevuelto = $this->CantidadPlus();
-                $this->restarSaldo();
-                $this->ultimopago();
-                $this->RestarPlus();
-                $this->ultimoplus      = false;
-                $this->ultimoTiempo    = time();
-                $this->ultimoColectivo = $colectivo;
-            }
+        if ($this->saldo >= $valor) {
+
+            $this->restarSaldo($valor);
+            $this->ultimopago($valor);
+            $this->ultimoplus      = FALSE;
+            $this->ultimoTiempo    = time();
             
-            return true;
+            return TRUE;
             
+        } else if ($this->viajesplus > 0) {
+            $this->viajesplus -= 1;
+            $this->ultimoplus = TRUE;
+            $this->ultimoTiempo = time();
+
+            return TRUE;
+
         }
-        else {
-            
-            if ($this->CantidadPlus() < 2) {
-                $this->plusdevuelto = 0;
-                $this->ultimoplus   = true;
-                $this->IncrementoPlus();
-                $this->ultimoTiempo    = time();
-                $this->ultimoColectivo = $colectivo;
-                return true;
-            }
-            return false;
-            
-        }
+
+        return FALSE;
         
     }
     

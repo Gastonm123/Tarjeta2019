@@ -3,6 +3,9 @@
 namespace TrabajoTarjeta;
 
 class Boleto implements BoletoInterface {
+    /**
+     * TODO agregar metodos estaticos que devuelvan el monto de viaje normal y de transbordo
+     */
     
     protected $valor;
     protected $colectivo;
