@@ -66,7 +66,7 @@ class MedioBoletoUniversitario extends Tarjeta implements TarjetaInterface {
                 if ($this->CantidadPlus() < 2) {
                     $this->plusdevuelto = 0;
                     $this->ultimoplus   = true;
-                    $this->IncrementoPlus();
+                    $this->descontarPlus();
                     $this->ultimoTiempo    = $this->tiempo->reciente();
                     $this->ultimoColectivo = $colectivo;
                     return true;
@@ -115,7 +115,7 @@ class MedioBoletoUniversitario extends Tarjeta implements TarjetaInterface {
                 if ($this->CantidadPlus() < 2) {
                     $this->plusdevuelto = 0;
                     $this->ultimoplus   = TRUE;
-                    $this->IncrementoPlus();
+                    $this->descontarPlus();
                     $this->ultimoTiempo    = $this->tiempo->reciente();
                     $this->ultimoColectivo = $colectivo;
                     return TRUE;

@@ -3,10 +3,7 @@
 namespace TrabajoTarjeta;
 
 class Boleto implements BoletoInterface {
-    /**
-     * TODO agregar metodos estaticos que devuelvan el monto de viaje normal y de transbordo
-     */
-    
+
     protected $valor;
     protected $colectivo;
     protected $fecha;
@@ -60,6 +57,16 @@ class Boleto implements BoletoInterface {
     
     public function obtenerFecha() {
         return $this->fecha;
+    }
+
+    public static function obtenerMontoTransbordo() 
+    {
+        return 0.0;
+    }
+
+    public static function obtenerMontoNormal()
+    {
+        return 30.0;
     }
     
 }

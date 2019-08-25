@@ -7,15 +7,13 @@ class Tarjeta implements TarjetaInterface {
     /** TODO cambiar el nombre de las variable:
      *  - iguales: usado para el transbordo y saber cuando se tomo la misma linea
      */ 
-    protected $saldo = 0;
-    public $monto = 14.8; // TODO el monto es responsabilidad del boleto
-    protected $viajesplus = 0; // ANCHOR quizas sea mejor cargar saldo negativo
+    protected $saldo;
+    protected $viajesplus;
     protected $ID;
     protected $ultboleto = null;
     protected $tipo = 'franquicia normal';
     protected $ultimoplus = false;
-    protected $fechault; // ANCHOR ?
-    protected $pago = 0;
+    protected $pago = 0; // TODO eliminar esto
     protected $plusdevuelto = 0;
     public $universitario = false;
     protected $ultimoTiempo = null;
@@ -71,7 +69,7 @@ class Tarjeta implements TarjetaInterface {
         return $this->pago;
     } 
     
-    public function tipotarjeta() 
+    public function tipotarjeta() // TODO matar esto
     {
         // esto es una aberracion
         if ($this->monto == 14.8) {
@@ -98,12 +96,16 @@ class Tarjeta implements TarjetaInterface {
         
     }
     
-    public function descontarPlus() { // TODO cambiar IncrementoPlus por descontarPlus
+    public function descontarPlus() { 
         if ($this->viajesplus <= 0) {
             throw new Exception('No hay viajes plus para descontar');
         }
 
         $this->viajesplus -= 1;
+    }
+
+    public function reiniciarPlus() {
+        $this->viajesplus = 2;
     }
     
     
@@ -219,28 +221,31 @@ class Tarjeta implements TarjetaInterface {
     }
     
     public function recargar($monto) {
+        // TODO delegar responsabilidad de extras en las recargas a otra clase
+        $extra = 0.0;
+        if ($monto == 962.59) {
+            $extra = 221.58;
+        } else if ($monto == 510.15) {
+            $extra = 81.93;
+        }
+
+        $this->saldo += $monto + $extra;
+
+        // si hay viajes plus usados descontarlos solo si se alcanzan a pagar
+        if ($this->viajesplus > 0) {
+            $montoViajesPlus = Boleto::obtenerMontoNormal() * $this->viajesplus;
+            
+            if ($this->saldo < $montoViajesPlus) {
+                // ANCHOR quizas se pueda devolver false simplemente y evitar tirar un error
+                throw new Exception('La carga no es posible ya que no se alcanzan a pagar los viajes plus');
+            } else {
+                $this->saldo -= $montoViajesPlus; 
+            }
+
+            $this->reiniciarPlus();
+        } 
         
-        if ($monto == 10 || $monto == 20 || $monto == 30 || $monto == 50 || $monto == 100 || $monto == 510.15 || $monto == 962.59) {
-            if ($monto == 962.59) {
-                $this->saldo += ($monto + 221.58);
-                return true;
-            }
-            else {
-                if ($monto == 510.15) {
-                    $this->saldo += ($monto + 81.93);
-                    return true;
-                }
-                else {
-                    $this->saldo += $monto;
-                    return true;
-                }
-            }
-            
-        }
-        else {
-            return false; // TODO revisar por q no pueden pagar distinto de esas cantidades
-            
-        }
+        return TRUE;
         
     }
     
