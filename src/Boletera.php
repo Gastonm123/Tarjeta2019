@@ -14,17 +14,15 @@ class Boletera implements BoleteraInterface {
 
     public function sacarBoleto($tarjeta)
     {
-        if ($this->esTransbordo($tarjeta)) {
-            $tipo = "transbordo";
-        } else if ($tarjeta->saldoSuficiente()) {
-            $tipo = "normal";
-        } else if ($tarjeta->CantidadPlus() > 0){
-            $tipo = "plus";
-            $tarjeta->descontarPlus();
-        } else {
-            $tipo = "denegado";
+        if ($tarjeta->obtenerTipo() == 'medio universitario' ||
+            $tarjeta->obtenerTipo() == 'media franquicia estudiantil') 
+        {
+            if ($tarjeta->pagoMedioBoleto() == FALSE) {
+                throw new Exception('No se pudo utilizar el medio boleto');
+            }      
         }
-        
+
+        $tipo = $this->tipoBoleto($tarjeta);
         $boleto = new Boleto($this, $tarjeta, $tipo);
         $descontado = $boleto->obtenerValor();
 
@@ -32,8 +30,27 @@ class Boletera implements BoleteraInterface {
         if ($tarjeta->pagar($descontado) != TRUE) {
             throw new Exception('No se pudo realizar el pago correctamente');
         }
-        
+
+        $tarjeta->guardarUltimoBoleto($boleto);
         $this->ingreso += $descontado;
+
+        return TRUE;
+    }
+
+    private function tipoBoleto($tarjeta) 
+    {
+        if ($this->esTransbordo($tarjeta)) {
+            $tipo = "transbordo";
+        } else if ($tarjeta->saldoSuficiente()) {
+            $tipo = "viaje normal";
+        } else if ($tarjeta->CantidadPlus() > 0) {
+            $tipo = "viaje plus";
+            $tarjeta->descontarPlus();
+        } else {
+            $tipo = "viaje denegado";
+        }
+
+        return $tipo;
     }
 
     private function esTransbordo($tarjeta) 

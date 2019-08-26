@@ -11,7 +11,7 @@ class Tarjeta implements TarjetaInterface {
     protected $viajesplus;
     protected $ID;
     protected $ultboleto = null;
-    protected $tipo = 'franquicia normal';
+    protected $tipo;
     protected $ultimoplus = false;
     protected $pago = 0; // TODO eliminar esto
     protected $plusdevuelto = 0;
@@ -28,13 +28,25 @@ class Tarjeta implements TarjetaInterface {
     protected $iguales = false;
     
     
-    public function __construct() {
+    public function __construct($tipo) {
         $this->saldo     = 0.0;
         $this->viajesplus = 2;
         $this->ID        = rand(0, 100);
         $this->ultboleto = null;
+        $this->tipo      = $tipo;
     }
     
+    public function obtenerTipo() {
+        /**
+         * Valores posibles para tipo:
+         * - franquicia completa
+         * - franquicia normal
+         * - media franquicia estudiantil
+         * - medio universitario
+         */
+    
+        return $this->tipo;
+    }
     
     public function getTiempo() {
         return time();
@@ -69,28 +81,6 @@ class Tarjeta implements TarjetaInterface {
         return $this->pago;
     } 
     
-    public function tipotarjeta() // TODO matar esto
-    {
-        // esto es una aberracion
-        if ($this->monto == 14.8) {
-            return $this->tipo;
-        }
-        else {
-            if ($this->monto == 7.4) {
-                
-                if ($this->universitario == TRUE) {
-                    $this->tipo = 'medio universitario';
-                    return $this->tipo;
-                }
-                $this->tipo = 'media franquicia estudiantil';
-                return $this->tipo;
-            }
-            $this->tipo = 'franquicia completa';
-            return $this->tipo;
-        }
-        
-    }
-    
     public function CantidadPlus() {
         return $this->viajesplus; //devuelve la cantidad de viajes plus que adeudamos
         
@@ -118,11 +108,6 @@ class Tarjeta implements TarjetaInterface {
         
     } //indica si tenemos saldo suficiente para pagar un viaje
     
-    public function obtenerUltimoFueTransbordo() {
-        
-        return $this->ultimoFueTransbordo;
-    }
-    
     // TODO meter toda la logica de cuando es tranbordo en boletera
     public function tiempoTransbordo() {
         if ($this->tiempo->esDiaSemana() && $this->tiempo->esFeriado() == FALSE) {
@@ -135,25 +120,19 @@ class Tarjeta implements TarjetaInterface {
     }
     
     public function restarSaldo($monto) {
-        if ($this->DevolverUltimoTiempo() == NULL) {
-            
+        if ($this->DevolverUltimoTiempo() == NULL) {        
             $this->saldo -= $monto;
-
         } else {
-            
             // pagar un viaje comun y corriente
             if ($this->esTransbordo()) {
-                
                 $this->saldo -= $monto;
                 $this->ultimoFueTransbordo = TRUE;
-            }
-            else {
+            } else {
                 
                 $this->saldo -= $monto;
                 // el primer viaje normal luego de un transbordo debe hacer esto
                 $this->ultimoFueTransbordo = FALSE;
             }
-            
         }
     }
     

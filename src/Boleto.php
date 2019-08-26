@@ -14,10 +14,20 @@ class Boleto implements BoletoInterface {
     protected $timeult;
     
     public function __construct($boletera, $tarjeta, $tipo) {
+        if ($tarjeta->tipo == 'media franquicia estudiantil' || 
+            $tarjeta->tipo == 'medio boleto universitario') 
+        {
+            $valor = Boleto::obtenerMedioBoleto();
+        } else if ($tarjeta->tipo == 'franquicia normal') {
+            $valor = Boleto::obtenerMontoNormal();
+        } else if ($tarjeta->tipo == 'franquicia completa') {
+            $valor = 0.0;
+        }
+        
         if($tipo == "transbordo") {
             $this->valor = Boleto::obtenerMontoTransbordo();
         } else if ($tipo == "normal") {
-            $this->valor = Boleto::obtenerMontoNormal();
+            $this->valor = $valor;
         } else if ($tipo == "plus") {
             $this->valor = 0.0; 
         } else if ($tipo == "denegado") {

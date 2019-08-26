@@ -85,7 +85,7 @@ interface TarjetaInterface {
      *  @return string
      *              El tipo de tarjeta
      */ 
-    public function tipotarjeta();
+    public function obtenerTipo();
 
     /**
      * Almacena la cantidad de viajes plus que DEBEMOS

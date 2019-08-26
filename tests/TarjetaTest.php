@@ -464,7 +464,7 @@ class TarjetaTest extends TestCase {
         $colectivo = new Colectivo("134", "mixta", 30);
         $tiempo    = new TiempoFalso(10);
         $tarjeta   = new MedioBoletoUniversitario($tiempo);
-        $this->assertEquals($tarjeta->tipotarjeta(), 'medio universitario'); //verificamos que la tarjeta sea del tipo correcto
+        $this->assertEquals($tarjeta->obtenerTipo(), 'medio universitario'); //verificamos que la tarjeta sea del tipo correcto
         
         $this->assertTrue($tarjeta->pagoMedioBoleto($colectivo));
         $tiempo->Avanzar(360); //avanzamos el tiempo 6 minutos para poder pagar

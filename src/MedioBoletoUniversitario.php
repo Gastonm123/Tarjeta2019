@@ -16,27 +16,19 @@ class MedioBoletoUniversitario extends Tarjeta implements TarjetaInterface {
      * @return bool
      *              Si se pudo pagar o no
      */
-    public function pagoMedioBoleto(Colectivo $colectivo)
+    public function pagoMedioBoleto()
     {
-        
-        $this->informarUso($colectivo);
-        $valor = Boleto::obtenerMontoNormal();
-
-        if ($this->revisarHora() == FALSE) {
-            
-            $this->pagar($valor);
-        
-        // supongo q tienen que esperar  5 minutos para volver a usar el colectivo
-        } else if (time() - $this->DevolverUltimoTiempo() > 5 * 60) { 
-            $valor = Boleto::obtenerMedioBoletoUniversitario();
-            
-            $this->pagar($valor);
-            $this->IncrementarBoleto();
-            
+        if ($this->obtenerTipo() == 'medio boleto') {
+            return TRUE;
         }
 
-        return false;
-        
+        if ($this->revisarHora() &&
+            time() - $this->DevolverUltimoTiempo() > 5 * 60) 
+        { 
+            return TRUE;
+        }
+
+        return FALSE;
     }
     
     /**
@@ -89,24 +81,23 @@ class MedioBoletoUniversitario extends Tarjeta implements TarjetaInterface {
      */
     public function revisarHora()
     {
-        
-        if($this->tipotarjeta() == 'medio universitario') {
-            $ultimoBoleto = $this->DevolverUltimoTiempo();
+        $ultimoBoleto = $this->DevolverUltimoTiempo();
 
-            if ($ultimoBoleto != NULL) {
-            
-                // si no pasaron 24hs y le quedan boletos devuelve true
-                if (time() - $ultimoBoleto < 60 * 60 * 24)
-                {
-                    return ($this->ViajesRestantes()); 
-                    
-                }
+        if ($ultimoBoleto != NULL) {
+        
+            // si no pasaron 24hs y le quedan boletos devuelve true
+            if (time() - $ultimoBoleto < 60 * 60 * 24)
+            {
+                return ($this->ViajesRestantes()); 
                 
-                // si pasaron 24hs devuelve false y reinicia los boletos
-                $this->ReiniciarBoleto();
-                return TRUE; 
             }
-        } 
+            
+            // si pasaron 24hs devuelve true y reinicia los boletos
+            $this->ReiniciarBoleto();
+            return TRUE; 
+        }
+
+        return TRUE;
         
     }
     
