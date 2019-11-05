@@ -31,4 +31,10 @@ interface BoleteraInterface {
      *      Devuelve si la operacion se realizo con exito
      */
     public function revision();
+
+    public function obtenerColectivo();
+
+    public function obtenerLimiteTransbordos();
+
+    public function obtenerTiempoTransbordo();
 }

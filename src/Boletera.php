@@ -10,24 +10,23 @@ class Boletera implements BoleteraInterface {
     public function __construct(ColectivoInterface $colectivo)
     {
         $this->colectivo = $colectivo;
+        $this->ingreso = 0;
     }
 
     public function sacarBoleto($tarjeta)
     {
-        if ($tarjeta->obtenerTipo() == 'medio universitario' ||
-            $tarjeta->obtenerTipo() == 'media franquicia estudiantil') 
-        {
-            if ($tarjeta->pagoMedioBoleto() == FALSE) {
-                throw new Exception('No se pudo utilizar el medio boleto');
-            }      
-        }
-
         $tipo = $this->tipoBoleto($tarjeta);
         $boleto = new Boleto($this, $tarjeta, $tipo);
         $descontado = $boleto->obtenerValor();
 
+        if ($tipo == 'medio boleto' && $tarjeta->medios == 0) {
+            throw new Exception('No se pueden utilizar mas medios');
+        }
+
         $tarjeta->informarUso($this->colectivo);
-        if ($tarjeta->pagar($descontado) != TRUE) {
+        $pago = $tarjeta->pagar($descontado);
+
+        if ($pago == FALSE) {
             throw new Exception('No se pudo realizar el pago correctamente');
         }
 
@@ -39,7 +38,19 @@ class Boletera implements BoleteraInterface {
 
     private function tipoBoleto($tarjeta) 
     {
-        if ($this->esTransbordo($tarjeta)) {
+        if ($tarjeta->tipo == 'media franquicia estudiantil' || 
+            $tarjeta->tipo == 'medio boleto universitario') 
+        {
+            if ($tarjeta->tipo == 'medio boleto universitario') {
+                $tarjeta->contarMedio();
+            }
+
+            $tipo = "medio boleto";
+        } else if ($tarjeta->tipo == 'franquicia normal') {
+            $tipo = "normal";
+        } else if ($tarjeta->tipo == 'franquicia completa') {
+            $tipo = "franquicia completa";
+        } if ($this->esTransbordo($tarjeta)) {
             $tipo = "transbordo";
         } else if ($tarjeta->saldoSuficiente()) {
             $tipo = "viaje normal";
@@ -55,10 +66,12 @@ class Boletera implements BoleteraInterface {
 
     private function esTransbordo($tarjeta) 
     {
+        $tiempo_desde_ultimo_viaje = time() - $tarjeta->DevolverUltimoTiempo();     
+
         if ($tarjeta->obtenerUltimoPlus() == FALSE && 
             $tarjeta->ColectivosIguales() == FALSE && 
             $this->obtenerLimiteTransbordos() > $tarjeta->obtenerNroTransbordos() &&
-            time() - $tarjeta->DevolverUltimoTiempo() <= $this->obtenerTiempoTransbordo()) 
+            $tiempo_desde_ultimo_viaje <= Tiempo::obtenerTiempoTransbordo()) 
         {
             return TRUE;
         }
@@ -69,20 +82,6 @@ class Boletera implements BoleteraInterface {
     private function obtenerLimiteTransbordos()
     {
         return 5000; // virtualmente infinito
-    }
-
-    private function obtenerTiempoTransbordo() 
-    {
-        $semana = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-
-        // si es semana 1 hora si es finde 2 horas
-        if (in_array(date('l'), $semana)) {
-            $minutos = 60;
-        } else {
-            $minutos = 120;
-        }
-
-        return (60 * $minutos);
     }
 
     public function obtenerColectivo() 

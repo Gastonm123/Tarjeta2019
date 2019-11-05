@@ -2,6 +2,8 @@
 
 namespace TrabajoTarjeta;
 
+use Exception;
+
 class Boleto implements BoletoInterface {
 
     protected $valor;
@@ -13,25 +15,21 @@ class Boleto implements BoletoInterface {
     protected $tipo;
     protected $timeult;
     
-    public function __construct($boletera, $tarjeta, $tipo) {
-        if ($tarjeta->tipo == 'media franquicia estudiantil' || 
-            $tarjeta->tipo == 'medio boleto universitario') 
-        {
-            $valor = Boleto::obtenerMedioBoleto();
-        } else if ($tarjeta->tipo == 'franquicia normal') {
-            $valor = Boleto::obtenerMontoNormal();
-        } else if ($tarjeta->tipo == 'franquicia completa') {
-            $valor = 0.0;
-        }
-        
+    public function __construct($boletera, $tarjeta, $tipo) { 
         if($tipo == "transbordo") {
             $this->valor = Boleto::obtenerMontoTransbordo();
+        } else if ($tipo == "medio boleto") {
+            $this->valor = Boleto::obtenerMedioBoleto();
         } else if ($tipo == "normal") {
-            $this->valor = $valor;
+            $this->valor = Boleto::obtenerMontoNormal();
+        } else if ($tipo == 'franquicia completa') {
+            $this->valor = Boleto::obtenerMontoFranquicia();
         } else if ($tipo == "plus") {
             $this->valor = 0.0; 
         } else if ($tipo == "denegado") {
-            $this->valor = 0.0;
+            throw new Exception("Boleto denegado");
+        } else {
+            throw new Exception("Tipo desconocido");
         }
 
         $this->colectivo   = $boletera->obtenerColectivo();
@@ -39,7 +37,6 @@ class Boleto implements BoletoInterface {
         $this->id          = $tarjeta->obtenerID();
         $this->fecha       = date('d-m-Y', time());
         $this->tipo        = $tipo;
-        
     }
     
     /**
@@ -79,13 +76,7 @@ class Boleto implements BoletoInterface {
         return 30.0;
     }
     
-    // TODO revisar si es medio boleto, medio boleto universitario o franquicia
     public static function obtenerMedioBoleto()
-    {
-        return 15.0;
-    }
-
-    public static function obtenerMedioBoletoUniversitario()
     {
         return 15.0;
     }
