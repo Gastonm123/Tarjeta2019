@@ -28,13 +28,13 @@ class Tarjeta implements TarjetaInterface {
     protected $iguales = false;
     
     
-    public function __construct($tipo) {
+    public function __construct($tipo_franquicia) {
         $this->saldo     = 0.0;
         $this->viajesplus = 0;
         $this->medios     = 2;
         $this->ID        = rand(0, 100);
         $this->ultboleto = null;
-        $this->tipo      = $tipo;
+        $this->tipo_franquicia      = $tipo_franquicia;
     }
 
     public function contarMedio() {
@@ -50,7 +50,7 @@ class Tarjeta implements TarjetaInterface {
          * - medio universitario
          */
     
-        return $this->tipo;
+        return $this->tipo_franquicia;
     }    
     
     public function DevolverUltimoBoleto() {

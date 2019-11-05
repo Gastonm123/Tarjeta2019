@@ -26,6 +26,8 @@ class Boleto implements BoletoInterface {
             $this->valor = Boleto::obtenerMontoFranquicia();
         } else if ($tipo == "plus") {
             $this->valor = 0.0; 
+        } else if ($tipo == "transbordo") {
+            $this->valor = 0;
         } else if ($tipo == "denegado") {
             throw new Exception("Boleto denegado");
         } else {
