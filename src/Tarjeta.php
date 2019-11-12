@@ -20,9 +20,6 @@ class Tarjeta implements TarjetaInterface {
     protected $tiempoTr;
     public $medios;
     
-    // el ultimo boleto fue transbordo
-    protected $ultimoFueTransbordo = false; 
-    
     protected $colec;
     protected $ultimoColectivo = null;
     protected $iguales = false;
@@ -42,19 +39,10 @@ class Tarjeta implements TarjetaInterface {
     }
     
     public function obtenerTipo() {
-        /**
-         * Valores posibles para tipo:
-         * - franquicia completa
-         * - franquicia normal
-         * - media franquicia estudiantil
-         * - medio universitario
-         */
-    
         return $this->tipo_franquicia;
     }    
     
     public function DevolverUltimoBoleto() {
-        // devuelve cuando se pago el ultimo boleto
         return $this->ultimoBoleto; 
     }
     
@@ -63,16 +51,16 @@ class Tarjeta implements TarjetaInterface {
     } 
     
     public function CantidadPlus() {
-        return $this->viajesplus; //devuelve la cantidad de viajes plus que adeudamos
-        
+        return $this->viajesplus; 
     }
     
     public function descontarPlus() { 
         if ($this->viajesplus >= 2) {
-            throw new Exception('No hay viajes plus para descontar');
+            return false;
         }
 
         $this->viajesplus += 1;
+        return true;
     }
 
     public function reiniciarPlus() {
@@ -85,21 +73,19 @@ class Tarjeta implements TarjetaInterface {
             return TRUE;
         }
 
-        return FALSE;
-        
-    } //indica si tenemos saldo suficiente para pagar un viaje
+        return FALSE;  
+    } 
     
     public function restarSaldo($monto) {
-        if ($this->ultimoBoleto == NULL) {        
+        if ($this->ultimoBoleto == NULL) {       
+            // primer viaje 
             $this->saldo -= $monto;
         } else {
-            // pagar un viaje comun y corriente
-            if ($this->esTransbordo()) {
-                $this->ultimoFueTransbordo = FALSE;
-            } else if ($this->ultimoFueTransbordo == FALSE) {
+
+            if (! $this->esTransbordo() ) {
                 $this->saldo -= $monto;
-                $this->ultimoFueTransbordo = FALSE;
             }
+
         }
     }
     
