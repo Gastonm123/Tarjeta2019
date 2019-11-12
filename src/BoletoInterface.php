@@ -32,4 +32,20 @@ interface BoletoInterface {
      */
     public function obtenerFecha();
 
+    /**
+     * Devuelve el monto de un transbordo
+     */
+    public static function obtenerMontoTransbordo();
+    /**
+     * Devuelve el monto de un medio boleto
+     */
+    public static function obtenerMontoMedioBoleto();
+    /**
+     * Devuelve el monto normal
+     */
+    public static function obtenerMontoNormal();
+    /**
+     * Devuelve el monto de una franquicia
+     */
+    public static function obtenerMontoFranquicia();
 }
