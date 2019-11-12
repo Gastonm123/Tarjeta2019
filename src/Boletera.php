@@ -7,10 +7,11 @@ class Boletera implements BoleteraInterface {
     protected $colectivo; // la boletera obviamente esta en un unico colectivo
     protected $ingreso;
 
-    public function __construct(ColectivoInterface $colectivo)
+    public function __construct(ColectivoInterface $colectivo, $tiempo = null)
     {
         $this->colectivo = $colectivo;
         $this->ingreso = 0;
+        $this->tiempo = new Tiempo($tiempo);
     }
 
     public function sacarBoleto($tarjeta)
@@ -19,15 +20,11 @@ class Boletera implements BoleteraInterface {
         $boleto = new Boleto($this, $tarjeta, $tipo);
         $descontado = $boleto->obtenerValor();
 
-        if ($tipo == 'medio boleto' && $tarjeta->medios == 0) {
-            throw new Exception('No se pueden utilizar mas medios');
-        }
-
         $tarjeta->informarUso($this->colectivo);
         $pago = $tarjeta->pagar($descontado);
 
         if ($pago == FALSE) {
-            throw new Exception('No se pudo realizar el pago correctamente');
+            return FALSE;
         }
 
         $tarjeta->guardarUltimoBoleto($boleto);
@@ -38,27 +35,34 @@ class Boletera implements BoleteraInterface {
 
     private function tipoBoleto($tarjeta) 
     {
-        if ($tarjeta->tipo == 'media franquicia estudiantil' || 
-            $tarjeta->tipo == 'medio boleto universitario') 
+        $tipo_tarjeta = $tarjeta->obtenerTipo();
+
+        if ((
+            $tipo_tarjeta == 'media franquicia estudiantil' || 
+            $tipo_tarjeta == 'medio boleto universitario'
+            ) && $tarjeta->medios > 0
+           )
         {
-            if ($tarjeta->tipo == 'medio boleto universitario') {
+            if ($tipo_tarjeta == 'medio boleto universitario') {
                 $tarjeta->contarMedio();
             }
 
             $tipo = "medio boleto";
-        } else if ($tarjeta->tipo == 'franquicia normal') {
-            $tipo = "normal";
-        } else if ($tarjeta->tipo == 'franquicia completa') {
+        } else if ($tipo_tarjeta == 'franquicia completa') {
             $tipo = "franquicia completa";
-        } if ($this->esTransbordo($tarjeta)) {
-            $tipo = "transbordo";
-        } else if ($tarjeta->saldoSuficiente()) {
-            $tipo = "viaje normal";
-        } else if ($tarjeta->CantidadPlus() > 0) {
-            $tipo = "viaje plus";
-            $tarjeta->descontarPlus();
         } else {
-            $tipo = "viaje denegado";
+
+            if ($this->esTransbordo($tarjeta)) {
+                $tipo = "transbordo";
+            } else if ($tarjeta->saldoSuficiente()) {
+                $tipo = "viaje normal";
+            } else if ($tarjeta->CantidadPlus() > 0) {
+                $tipo = "viaje plus";
+                $tarjeta->descontarPlus();
+            } else {
+                $tipo = "viaje denegado";
+            }
+
         }
 
         return $tipo;

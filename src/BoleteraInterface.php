@@ -11,8 +11,8 @@ interface BoleteraInterface {
      * 
      * @param TarjetaInterface $tarjeta
      * 
-     * @return BoletoInterface
-     *      Devuelve el boleto emitido
+     * @return BoletoInterface|Bool
+     *      Devuelve el boleto emitido o False si no se pudo generar un boleto
      */
     public function sacarBoleto($tarjeta);
 
