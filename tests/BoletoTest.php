@@ -27,7 +27,7 @@ class BoletoTest extends TestCase {
         $this->assertEquals(0, $boleto->obtenerValor());
     }
 
-    public function circuitoJuan()
+    public function circuitoViajePlus()
     {
         $colectivo = new Colectivo("133 negra", "semptur", "1234");
         $tarjeta = new Tarjeta("franquicia completa");
@@ -50,7 +50,7 @@ class BoletoTest extends TestCase {
         $colectivo->pagarCon($tarjeta);
     }
 
-    public function circuitoPepe()
+    public function circuitoMedioBoleto()
     {
         $colectivo = new Colectivo("133 negra", "semptur", "1234");
         $tarjeta = new Tarjeta("media franquicia estudiantil");
@@ -66,11 +66,9 @@ class BoletoTest extends TestCase {
         $colectivo->pagarCon($tarjeta);
         $boleto = $colectivo->pagarCon($tarjeta);
 
-        $this->assertEquals("plus", $boleto->obtenerTipo());
-        $this->assertEquals(0, $boleto->obtenerValor());
+        $tarjeta->recargar(100);
 
-        // Detectar que error tira y esperarlo
-        $colectivo->pagarCon($tarjeta);
+        $this->assertEquals($tarjeta->)
     }
 
     // public function testTransbordo()

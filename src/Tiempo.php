@@ -3,6 +3,18 @@
 namespace TrabajoTarjeta;
 
 class Tiempo implements TiempoInterface {
+    public function __construct($tiempo = null) {
+        $this->tiempo = $tiempo;
+    }
+
+    public function tiempo() {
+        if ($this->tiempo == null) {
+            return time();
+        }
+
+        return $this->tiempo;
+    }
+
     public static function obtenerTiempoTransbordo() 
     {
         $semana = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];

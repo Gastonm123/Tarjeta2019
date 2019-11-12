@@ -172,6 +172,10 @@ class Tarjeta implements TarjetaInterface {
         return FALSE;
         
     }
+
+    public function obtenerSaldo() {
+        return $this->saldo;
+    }
     
     public function recargar($monto) {
         $this->saldo = 0;
@@ -186,7 +190,7 @@ class Tarjeta implements TarjetaInterface {
             $montoViajesPlus = Boleto::obtenerMontoNormal() * $this->viajesplus;
             
             if ($this->saldo < $montoViajesPlus) {
-                throw new Exception('La carga no es posible ya que no se alcanzan a pagar los viajes plus');
+                return FALSE;
             } else {
                 $this->saldo -= $montoViajesPlus; 
             }

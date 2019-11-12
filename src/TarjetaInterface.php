@@ -23,36 +23,15 @@ interface TarjetaInterface {
      */
     public function obtenerSaldo(); 
 
-    /**
-     * Devuelve el tiempo actual en base al tiempo inyectado a la tarjeta
-     * @return int
-     *      tiempo 
-     */
-    public function getTiempo(); 
 
     /**
-     *
-     * @return int 
-     *      la cantidad de viajes plus que se DEVOLVIERON el ultimo viaje.
-     *      
-     */
-    public function MostrarPlusDevueltos();  
-
-
-    /**
-     * Reinicia la variable que almacena la cantidad de plus que se devolvieron a 0.
-     * Esta funcion no retorna nada
-     */
-    public function reiniciarPlusDevueltos();
-
-    /**
-     * Devuelve el tiempo en que se realizó el ultimo viaje
+     * Devuelve el ultimo boleto que se saco con la tarjeta
      * En caso de que sea el primer viaje de la tarjeta esta funcion retorna NULL
      * 
      * @return int 
-     *       El tiempo en el que se realizó el ultimo viaje.
+     *       El tiempo del ultimo boleto que se saco con la tarjeta
      */
-    public function DevolverUltimoTiempo(); 
+    public function DevolverUltimoBoleto(); 
 
     /**
      * Devuelve TRUE si el ultimo viaje realizo fue plus. Devuelve FALSE en caso contrario
@@ -61,12 +40,6 @@ interface TarjetaInterface {
      *          $Ultimoplus
      */
     public function obtenerUltimoPlus();
-
-    /**
-     * Guarda en la variable pago la cantidad de dinero que gastamos en el ultimo viaje.
-     * Esta funcion solo procesa. No retorna nada
-     */
-    public function ultimopago();
 
     /**
      * Retorna la cantidad de dinero que usamos el ultimo viaje, que se encuentra almacenada 
