@@ -100,14 +100,6 @@ interface TarjetaInterface {
     public function informarUso(ColectivoInterface $colectivo);
 
     /**
-     * Devuelve TRUE si el viaje que vamos a pagar debe ser transbordo. 
-     * Devuelve FALSO en caso contrario
-     * 
-     * @return bool
-     */
-    public function esTransbordo();
-
-    /**
      * Resta el saldo a nuestra tarjeta despues de pagar un viaje
      */
     public function restarSaldo();

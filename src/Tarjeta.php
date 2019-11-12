@@ -23,15 +23,17 @@ class Tarjeta implements TarjetaInterface {
     protected $colec;
     protected $ultimoColectivo = null;
     protected $iguales = false;
+    protected $tiempo;
+
     
-    
-    public function __construct($tipo_franquicia) {
+    public function __construct($tipo_franquicia, $tiempo = null) {
         $this->saldo     = 0.0;
         $this->viajesplus = 0;
         $this->medios     = 2;
         $this->ID        = rand(0, 100);
         $this->ultboleto = null;
-        $this->tipo_franquicia      = $tipo_franquicia;
+        $this->tipo_franquicia = $tipo_franquicia;
+        $this->tiempo    = new Tiempo($tiempo);
     }
 
     public function contarMedio() {
@@ -77,27 +79,7 @@ class Tarjeta implements TarjetaInterface {
     } 
     
     public function restarSaldo($monto) {
-        if ($this->ultimoBoleto == NULL) {       
-            // primer viaje 
-            $this->saldo -= $monto;
-        } else {
-
-            if (! $this->esTransbordo() ) {
-                $this->saldo -= $monto;
-            }
-
-        }
-    }
-    
-    public function esTransbordo()
-    {
-        $tiempo_desde_ultimo_boleto = time() - $this->ultimoBoleto;
-        
-        if ($tiempo_desde_ultimo_boleto < Tiempo::obtenerTiempoTransbordo()) {
-            return TRUE;
-        }
-
-        return FALSE;
+        $this->saldo -= $monto;
     }
 
     public function obtenerID() {
@@ -142,14 +124,14 @@ class Tarjeta implements TarjetaInterface {
             $this->restarSaldo($valor);
             $this->ultimoPago      = $valor;
             $this->ultimoplus      = FALSE;
-            $this->ultimoBoleto    = time();
+            $this->ultimoBoleto    = $this->tiempo->tiempo();
             
             return TRUE;
             
         } else if ($this->viajesplus > 0) {
             $this->viajesplus -= 1;
             $this->ultimoplus = TRUE;
-            $this->ultimoBoleto = time();
+            $this->ultimoBoleto = $this->tiempo->tiempo();
 
             return TRUE;
 

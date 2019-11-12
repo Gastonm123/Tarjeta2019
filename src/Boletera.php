@@ -6,6 +6,7 @@ class Boletera implements BoleteraInterface {
 
     protected $colectivo; // la boletera obviamente esta en un unico colectivo
     protected $ingreso;
+    protected $tiempo;
 
     public function __construct(ColectivoInterface $colectivo, $tiempo = null)
     {
@@ -70,7 +71,7 @@ class Boletera implements BoleteraInterface {
 
     private function esTransbordo($tarjeta) 
     {
-        $tiempo_desde_ultimo_viaje = time() - $tarjeta->DevolverUltimoTiempo();     
+        $tiempo_desde_ultimo_viaje = $this->tiempo->tiempo() - $tarjeta->DevolverUltimoTiempo();     
 
         if ($tarjeta->obtenerUltimoPlus() == FALSE && 
             $tarjeta->ColectivosIguales() == FALSE && 
